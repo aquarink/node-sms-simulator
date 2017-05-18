@@ -1,0 +1,12 @@
+doctype html
+html(lang='en')
+    head
+        title WRITE
+    body
+        h1 Write SMS
+        ul
+        for sms in items
+            li
+                a(href='/u/'+sms) #{sms}
+        else
+            li sorry, no books!

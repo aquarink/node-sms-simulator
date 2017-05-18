@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+    head
+        title MESSAGE
+    body
+        h1 Message
+        ul
+        for sms in items
+            li
+                b(style='color:red') #{sms.type}
+                |  -- #{sms.from} -- #{sms.sms} -- #{sms.sms_date} -- 
+                b(style='color:blue') #{sms.stat}
+        else
+            li sorry, no books!
+            
+        a(href='/u/w/'+msisdn) Write Message 
+        a(href='/u') Back

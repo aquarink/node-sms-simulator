@@ -1,0 +1,18 @@
+doctype html
+html(lang='en')
+    head
+        title INBOX
+    body
+        h1 Inbox SMS
+        form(action='/u/sendsms', method='POST')
+            table
+                tr
+                    td Write SMS
+                    td
+                        textarea(name='sms', placeholder='Write message here')
+                tr
+                    td
+                        input(type='hidden', name='msisdn', value=msisdn)
+                    td
+                        input(type='submit', value='Send')
+        a(href='/u/'+msisdn) Back
