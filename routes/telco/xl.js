@@ -3,8 +3,6 @@
 var express = require('express');
 var router = express.Router();
 var reQuest = require('request');
-
-var fs = require('fs');
 var getConnection = require('../../connection');
 
 router.get('/', function (req, res, next) {
@@ -32,15 +30,17 @@ router.get('/incoming', function (req, res, next) {
     var hrtime = process.hrtime();
     var hrTimeMicro = hrtime[0] * 1000000 + hrtime[1];
 
-    var sessionId = dateString + hrTimeMicro;
-
     // Parsing
     if (username === '' || password === '' || msisdn === '' || cost === '' || msisdn === '' || sms === '') {
         console.log('null');
     } else {
 
+
         if (trxId === '') {
-            trxId = sessionId;
+            trxId = dateString + hrTimeMicro;
+            res.send(dateString + hrTimeMicro);
+        } else {
+            res.send('ok');
         }
         var obj = {
             type: 'inbox',
@@ -77,13 +77,22 @@ router.get('/incoming', function (req, res, next) {
 
         simulatorInsertSms(obj, function (data) {
             if (data === 'insertOk') {
-                console.log('Insert ' + sessionId);
+
+                // HIT DR
+                reQuest({
+                    // stat 1 = sended
+                    url: 'http://localhost:3000/xl/dr?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=1',
+                    method: "GET"
+                }, function _callback(err, res, body) {
+                    //console.log('[DR] ' + body + ' - ' + data);
+                    //console.log(res);
+                    console.log('DR to : ' + msisdn);
+                });
             } else {
                 console.log(data);
             }
         });
     }
-    res.send(sessionId);
 });
 
 router.get('/origin', function (req, res, next) {
@@ -138,11 +147,12 @@ router.get('/origin', function (req, res, next) {
 
         simulatorUpdateStatSms(id, function (data) {
             if (data === 'updateOk') {
+                // HIT MO
                 reQuest({
-                    url: 'http://localhost:3000/xl/mo?msisdn=' + req.body.msisdn + '&sms=' + req.body.sms + '&trxid=' + id + '&trxdate=' + dateString + '&shortcode=912345',
+                    url: 'http://localhost:3000/xl/mo?msisdn=' + msisdn + '&sms=' + sms + '&trxid=' + id + '&trxdate=' + dateString + '&shortcode=912345',
                     method: "GET"
                 }, function _callback(err, res, body) {
-                    console.log(body + ' - ' + data);
+                    console.log('[MO] ' + body + ' - ' + data);
                 });
             } else {
                 console.log(data);
