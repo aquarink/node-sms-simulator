@@ -32,6 +32,7 @@ router.get('/incoming', function (req, res, next) {
 
     // Parsing
     if (username === '' || password === '' || msisdn === '' || cost === '' || msisdn === '' || sms === '') {
+        res.send('incomingEmpty');
         console.log('null');
     } else {
 
@@ -61,35 +62,38 @@ router.get('/incoming', function (req, res, next) {
             });
         }
 
-        function simulatorInsertSms(dataSms, callback) {
-            mongoConnection(function (connection) {
-                if (connection === 'ok') {
-                    getConnection.db.collection('sms').insertOne(dataSms, function (err, res) {
-                        if (!err) {
-                            callback('insertOk');
-                        } else {
-                            callback(err);
-                        }
-                    });
+        function responseEngine(callback) {
+            // HIT DR
+            reQuest({
+                // stat 1 = sended
+                url: 'http://localhost:3000/dr/xl?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=1',
+                method: "GET"
+            }, function _callback(err, res, body) {
+                if (err) {
+                    callback(err.code);
+                } else {
+                    callback('drOk');
                 }
             });
         }
 
-        simulatorInsertSms(obj, function (data) {
-            if (data === 'insertOk') {
-
-                // HIT DR
-                reQuest({
-                    // stat 1 = sended
-                    url: 'http://localhost:3000/xl/dr?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=1',
-                    method: "GET"
-                }, function _callback(err, res, body) {
-                    //console.log('[DR] ' + body + ' - ' + data);
-                    //console.log(res);
-                    console.log('DR to : ' + msisdn);
+        responseEngine(function (result) {
+            if (result === 'drOk') {
+                mongoConnection(function (connection) {
+                    if (connection === 'ok') {
+                        getConnection.db.collection('sms').insertOne(obj, function (err, res) {
+                            if (!err) {
+                                res.send('incomingOk');
+                                console.log('insertOk');
+                            } else {
+                                console.log(err);
+                            }
+                        });
+                    }
                 });
             } else {
-                console.log(data);
+                res.send('incomingError');
+                console.log('incoming ' + result);
             }
         });
     }
@@ -118,6 +122,7 @@ router.get('/origin', function (req, res, next) {
 
     // Parsing
     if (msisdn === '' || msisdn === '' || sms === '' || id === '') {
+        res.send('originEmpty');
         console.log('null');
     } else {
 
@@ -131,31 +136,39 @@ router.get('/origin', function (req, res, next) {
             });
         }
 
-        function simulatorUpdateStatSms(sessID, callback) {
-            mongoConnection(function (connection) {
-                if (connection === 'ok') {
-                    getConnection.db.collection('sms').update({sessionId: sessID}, {$set: {'stat': 'sended'}}, function (err, result) {
-                        if (!err) {
-                            callback('updateOk');
-                        } else {
-                            callback(err);
-                        }
-                    });
+        function responseEngine(callback) {
+            // HIT DR
+            reQuest({
+                url: 'http://localhost:3000/mo/xl?msisdn=' + msisdn + '&sms=' + sms + '&trxid=' + id + '&trxdate=' + dateString + '&shortcode=912345',
+                method: "GET"
+            }, function _callback(err, res, body) {
+                if (err) {
+                    callback(err.code);
+                } else {
+                    callback('drOk');
                 }
             });
         }
 
-        simulatorUpdateStatSms(id, function (data) {
-            if (data === 'updateOk') {
-                // HIT MO
-                reQuest({
-                    url: 'http://localhost:3000/xl/mo?msisdn=' + msisdn + '&sms=' + sms + '&trxid=' + id + '&trxdate=' + dateString + '&shortcode=912345',
-                    method: "GET"
-                }, function _callback(err, res, body) {
-                    console.log('[MO] ' + body + ' - ' + data);
+        responseEngine(function (result) {
+            if (result === 'drOk') {
+                mongoConnection(function (connection) {
+                    if (connection === 'ok') {
+                        mongoConnection(function (connection) {
+                            if (connection === 'ok') {
+                                getConnection.db.collection('sms').update({sessionId: id}, {$set: {'stat': 'sended'}}, function (err, result) {
+                                    if (!err) {
+                                        res.send('originOk');
+                                    } else {
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                        });
+                    }
                 });
             } else {
-                console.log(data);
+                res.send('originError');
             }
         });
     }

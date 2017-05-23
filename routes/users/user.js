@@ -29,13 +29,18 @@ router.post('/sendsms', function (req, res) {
         sms_date: dateString,
         stat: 'pending'
     };
-
-    reQuest({
-        url: 'http://localhost:3010/xl/origin?id=' + trxIdBySms + '&msisdn=' + req.body.msisdn + '&sms=' + req.body.sms + '&shortcode=912345',
-        method: "GET"
-    }, function _callback(err, res, body) {
-        console.log(body);
-    });
+    function simulatorResponse(callback) {
+        reQuest({
+            url: 'http://localhost:3010/xl/origin?id=' + trxIdBySms + '&msisdn=' + req.body.msisdn + '&sms=' + req.body.sms + '&shortcode=912345',
+            method: "GET"
+        }, function _callback(err, res, body) {
+            if (body === 'originError') {
+                callback(body);
+            } else {
+                callback('drOk');
+            }
+        });
+    }
 
     function mongoConnection(callback) {
         getConnection.connect(function (err) {
@@ -61,13 +66,21 @@ router.post('/sendsms', function (req, res) {
         });
     }
 
-    simulatorSendSms(obj, function (data) {
-        if (data === 'insertOk') {
-            res.redirect('/u/' + req.body.msisdn);
+    simulatorResponse(function (result) {
+        if (result === 'drOk') {
+            simulatorSendSms(obj, function (data) {
+                if (data === 'insertOk') {
+                    res.redirect('/u/' + req.body.msisdn);
+                } else {
+                    console.log(data);
+                }
+            });
         } else {
-            console.log(data);
+            res.send('Failed Connection');
+            console.log('Error Pada ' + result);
         }
     });
+
 
 });
 
@@ -108,7 +121,6 @@ router.get('/', function (req, res, next) {
             res.render('index', {
                 items: data
             });
-            console.log(data);
         }
     });
 });
