@@ -20,14 +20,23 @@ router.post('/sendsms', function (req, res) {
 
     var trxIdBySms = dateString + hrTimeMicro;
 
+    // Parsing msisdn 0 = 62
+    var msisdnNew;
+
+    if (req.body.msisdn.slice(0, 2) === '62') {
+
+    } else {
+        msisdnNew = '62' + req.body.msisdn.slice(1);
+    }
+
     var obj = {
         sessionId: trxIdBySms,
         type: 'send',
-        msisdn: req.body.msisdn,
+        msisdn: msisdnNew,
         sms: req.body.sms,
         from: 912345,
         sms_date: dateString,
-        stat: 'pending'
+        stat: 'delivered'
     };
     function simulatorResponse(callback) {
         reQuest({

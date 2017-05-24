@@ -9,6 +9,7 @@ router.get('/', function (req, res, next) {
     res.send('index');
 });
 
+// Dari Engine
 router.get('/incoming', function (req, res, next) {
     var username = req.query.username;
     var password = req.query.password;
@@ -43,6 +44,7 @@ router.get('/incoming', function (req, res, next) {
         } else {
             res.send('ok');
         }
+        
         var obj = {
             type: 'inbox',
             msisdn: msisdn,
@@ -83,7 +85,6 @@ router.get('/incoming', function (req, res, next) {
                     if (connection === 'ok') {
                         getConnection.db.collection('sms').insertOne(obj, function (err, res) {
                             if (!err) {
-                                res.send('incomingOk');
                                 console.log('insertOk');
                             } else {
                                 console.log(err);

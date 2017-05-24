@@ -1,9 +1,9 @@
 doctype html
 html(lang='en')
     head
-        title MESSAGE
+        title Inbox
     body
-        h1 Message
+        h1 Inbox
         ul
         for sms in items
             li
@@ -11,7 +11,7 @@ html(lang='en')
                 |  -- #{sms.from} -- #{sms.sms} -- #{sms.sms_date} -- 
                 b(style='color:blue') #{sms.stat}
         else
-            li sorry, no books!
+            li Don't have message!
             
         a(href='/u/w/'+msisdn) Write Message 
         a(href='/u') Back
