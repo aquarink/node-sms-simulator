@@ -24,7 +24,7 @@ router.post('/sendsms', function (req, res) {
     var msisdnNew;
 
     if (req.body.msisdn.slice(0, 2) === '62') {
-
+        msisdnNew = req.body.msisdn;
     } else {
         msisdnNew = '62' + req.body.msisdn.slice(1);
     }
@@ -81,12 +81,12 @@ router.post('/sendsms', function (req, res) {
                 if (data === 'insertOk') {
                     res.redirect('/u/' + req.body.msisdn);
                 } else {
-                    console.log(data);
+                    console.log(data + ' : ' + dateString);
                 }
             });
         } else {
             res.send('Failed Connection');
-            console.log('Error Pada ' + result);
+            console.log('Error Pada ' + result + ' ' + dateString);
         }
     });
 

@@ -5,20 +5,6 @@ var os = require('os');
 var path = require('path');
 var bodyParser = require('body-parser');
 
-//var disk = require('diskusage');
-
-console.log('SIMULATOR TELCO & SMS BY MOBIWIN');
-console.log('------------------------------');
-// Monitoring
-console.log('Operating system \t : ' + os.platform() + ' ' + os.arch() + ' ' + os.type());
-console.log('Memory Capacity \t : ' + parseInt(os.totalmem()) / 1000000 + ' Mb');
-console.log('Free Memory \t \t : ' + parseInt(os.freemem()) / 1000000 + ' Mb');
-console.log('Home Dir \t \t : ' + os.homedir());
-console.log('Hostname \t \t : ' + os.hostname());
-
-// Disk
-console.log('------------------------------');
-
 //Including Telco Routing
 var xl = require('./routes/telco/xl');
 var isat = require('./routes/telco/isat');
@@ -55,5 +41,13 @@ app.get('*', function (req, res) {
 
 // Server
 app.listen(3010, function () {
-    console.log('Simulator Turn On : port 3010!');
+    console.log('SIMULATOR TELCO & SMS BY MOBIWIN');
+    console.log('------------------------------');
+    // Monitoring
+    console.log('Operating system \t : ' + os.platform() + ' ' + os.arch() + ' ' + os.type());
+    console.log('Memory Capacity \t : ' + parseInt(os.totalmem()) / 1000000 + ' Mb');
+    console.log('Free Memory \t \t : ' + parseInt(os.freemem()) / 1000000 + ' Mb');
+    console.log('Home Dir \t \t : ' + os.homedir());
+    console.log('Hostname \t \t : ' + os.hostname());
+    console.log('------------------------------');
 });
