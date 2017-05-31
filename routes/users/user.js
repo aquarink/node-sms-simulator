@@ -7,12 +7,7 @@ var getConnection = require('../../connection');
 
 router.post('/sendsms', function (req, res) {
     // Date
-    var ts_hms = new Date();
-    var dateString = ts_hms.getFullYear() + '' +
-            ("0" + (ts_hms.getMonth() + 1)).slice(-2) + '' +
-            ("0" + (ts_hms.getDate() + 1)).slice(-2) + '_' +
-            ("0" + ts_hms.getHours()).slice(-2) + '' +
-            ("0" + ts_hms.getMinutes()).slice(-2);
+    var dateString = new Date().toISOString().replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '').replace(/T/, '').replace(/\..+/, '');
 
     // New
     var hrtime = process.hrtime();
@@ -80,8 +75,9 @@ router.post('/sendsms', function (req, res) {
             simulatorSendSms(obj, function (data) {
                 if (data === 'insertOk') {
                     res.redirect('/u/' + req.body.msisdn);
+                    console.log('Send Message : ' + dateString);
                 } else {
-                    console.log(data + ' : ' + dateString);
+                    console.log(data + ' ::: ' + dateString);
                 }
             });
         } else {

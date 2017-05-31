@@ -20,12 +20,7 @@ router.get('/incoming', function (req, res, next) {
     var shortName = req.query.shortname;
 
     // Date
-    var ts_hms = new Date();
-    var dateString = ts_hms.getFullYear() + '' +
-            ("0" + (ts_hms.getMonth() + 1)).slice(-2) + '' +
-            ("0" + (ts_hms.getDate() + 1)).slice(-2) + '_' +
-            ("0" + ts_hms.getHours()).slice(-2) + '' +
-            ("0" + ts_hms.getMinutes()).slice(-2);
+    var dateString = new Date().toISOString().replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '').replace(/T/, '').replace(/\..+/, '');
 
     // New
     var hrtime = process.hrtime();
@@ -44,7 +39,7 @@ router.get('/incoming', function (req, res, next) {
         } else {
             res.send('ok');
         }
-        
+
         var obj = {
             type: 'inbox',
             msisdn: msisdn,
@@ -85,7 +80,7 @@ router.get('/incoming', function (req, res, next) {
                     if (connection === 'ok') {
                         getConnection.db.collection('sms').insertOne(obj, function (err, res) {
                             if (!err) {
-                                console.log('insertOk');
+                                console.log('Insert Incoming : ' + dateString);
                             } else {
                                 console.log(err);
                             }
