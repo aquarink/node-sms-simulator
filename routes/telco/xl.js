@@ -9,6 +9,45 @@ router.get('/', function (req, res, next) {
     res.send('index');
 });
 
+//Debug
+router.get('/incoming2', function (req, res, next) {
+    var username = req.query.username;
+    var password = req.query.password;
+    var msisdn = req.query.msisdn;
+    var trxId = req.query.trxid;
+    var cost = req.query.serviceId;
+    var sms = req.query.sms;
+    var shortName = req.query.shortname;
+
+    if (username === '' || password === '' || msisdn === '' || cost === '' || msisdn === '' || sms === '') {
+        res.send('incomingEmpty');
+        console.log('null');
+    } else {
+        // Date
+        var dateString = new Date().toISOString().replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '').replace(/T/, '').replace(/\..+/, '');
+        // New
+        var hrtime = process.hrtime();
+        var hrTimeMicro = hrtime[0] * 1000000 + hrtime[1];
+
+        if (trxId === '') {
+            trxId = dateString + hrTimeMicro;
+            res.send(dateString + hrTimeMicro);
+        } else {
+            res.send('ok');
+        }
+
+        var obj = {
+            type: 'inbox',
+            msisdn: msisdn,
+            sms: sms,
+            from: 912345,
+            sms_date: dateString,
+            stat: 'reply'
+        };
+        //res.send(JSON.stringify(obj));
+    }
+});
+
 // Dari Engine
 router.get('/incoming', function (req, res, next) {
     var username = req.query.username;
@@ -63,7 +102,7 @@ router.get('/incoming', function (req, res, next) {
             // HIT DR
             reQuest({
                 // stat 1 = sended
-                url: 'http://localhost:3000/dr/xl?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=1',
+                url: 'http://localhost:3000/dr/xl?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=2',
                 method: "GET"
             }, function _callback(err, res, body) {
                 if (err) {
