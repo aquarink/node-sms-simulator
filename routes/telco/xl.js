@@ -105,9 +105,7 @@ router.get('/incoming', function (req, res, next) {
                 url: 'http://localhost:3000/dr/xl?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=2',
                 method: "GET"
             }, function _callback(err, res, body) {
-                if (err) {
-                    callback(err.code);
-                } else {
+                if (!err) {
                     callback('drOk');
                 }
             });
@@ -121,14 +119,14 @@ router.get('/incoming', function (req, res, next) {
                             if (!err) {
                                 console.log('Insert Incoming : ' + dateString);
                             } else {
-                                console.log(err);
+                                console.log('err-122');
                             }
                         });
                     }
                 });
             } else {
                 res.send('incomingError');
-                console.log('incoming ' + result);
+                console.log('incomingError');
             }
         });
     }
