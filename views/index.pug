@@ -4,9 +4,9 @@ html(lang='en')
         title Phone Number
     body
         h1 Phone Number
-        ul
-        for sms in items
-            li
-                a(href='/u/'+sms) #{sms}
-        else
-            li sorry, no books!
+        ol
+            for sms in items
+                li
+                    a(href='/u/'+sms) #{sms}
+            else
+                li sorry, no books!

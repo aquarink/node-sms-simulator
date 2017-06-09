@@ -74,7 +74,7 @@ router.get('/incoming', function (req, res, next) {
 
         if (trxId === '') {
             trxId = dateString + hrTimeMicro;
-            res.send(dateString + hrTimeMicro);
+            res.send('telco-' + dateString + hrTimeMicro);
         } else {
             res.send('ok');
         }
