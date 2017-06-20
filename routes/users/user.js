@@ -34,16 +34,20 @@ router.post('/sendsms', function (req, res) {
         stat: 'delivered'
     };
     function simulatorResponse(callback) {
-        reQuest({
-            url: 'http://localhost:3010/xl/origin?id=' + trxIdBySms + '&msisdn=' + req.body.msisdn + '&sms=' + req.body.sms + '&shortcode=912345',
-            method: "GET"
-        }, function _callback(err, res, body) {
-            if (body === 'originError') {
-                callback(body);
-            } else {
-                callback('drOk');
-            }
-        });
+        try {
+            reQuest({
+                url: 'http://localhost:3010/xl/origin?id=' + trxIdBySms + '&msisdn=' + req.body.msisdn + '&sms=' + req.body.sms + '&shortcode=912345',
+                method: "GET"
+            }, function _callback(err, res, body) {
+                if (body === 'originError') {
+                    callback(body);
+                } else {
+                    callback('drOk');
+                }
+            });
+        } catch (err) {
+            console.log('Hit SEnd SMS Err');
+        }
     }
 
     function mongoConnection(callback) {
@@ -101,8 +105,8 @@ router.get('/smdebug', function (req, res, next) {
 
     // Parsing msisdn 0 = 62
     var msisdnNew;
-    
-    
+
+
 
     if (req.query.msisdn.slice(0, 2) === '62') {
         msisdnNew = req.params.msisdn;
@@ -120,16 +124,20 @@ router.get('/smdebug', function (req, res, next) {
         stat: 'delivered'
     };
     function simulatorResponse(callback) {
-        reQuest({
-            url: 'http://localhost:3010/xl/origin?id=' + trxIdBySms + '&msisdn=' + req.query.msisdn + '&sms=' + req.query.sms + '&shortcode=912345',
-            method: "GET"
-        }, function _callback(err, res, body) {
-            if (body === 'originError') {
-                callback(body);
-            } else {
-                callback('drOk');
-            }
-        });
+        try {
+            reQuest({
+                url: 'http://localhost:3010/xl/origin?id=' + trxIdBySms + '&msisdn=' + req.query.msisdn + '&sms=' + req.query.sms + '&shortcode=912345',
+                method: "GET"
+            }, function _callback(err, res, body) {
+                if (body === 'originError') {
+                    callback(body);
+                } else {
+                    callback('drOk');
+                }
+            });
+        } catch (err) {
+            console.log('Hit SMS Debug Err');
+        }
     }
 
     function mongoConnection(callback) {

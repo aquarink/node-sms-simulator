@@ -100,15 +100,19 @@ router.get('/incoming', function (req, res, next) {
 
         function responseEngine(callback) {
             // HIT DR
-            reQuest({
-                // stat 1 = sended
-                url: 'http://localhost:3000/dr/xl?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=2',
-                method: "GET"
-            }, function _callback(err, res, body) {
-                if (!err) {
-                    callback('drOk');
-                }
-            });
+            try {
+                reQuest({
+                    // stat 1 = sended
+                    url: 'http://122.248.32.27:3000/dr/xl?msisdn=' + msisdn + '&trxid=' + trxId + '&trxdate=' + dateString + '&shortcode=912345&stat=2',
+                    method: "GET"
+                }, function _callback(err, res, body) {
+                    if (!err) {
+                        callback('drOk');
+                    }
+                });
+            } catch (err) {
+                console.log('Hit Incoming Err');
+            }
         }
 
         responseEngine(function (result) {
@@ -171,16 +175,20 @@ router.get('/origin', function (req, res, next) {
 
         function responseEngine(callback) {
             // HIT DR
-            reQuest({
-                url: 'http://localhost:3000/mo/xl?msisdn=' + msisdn + '&sms=' + sms + '&trxid=' + id + '&trxdate=' + dateString + '&shortcode=912345',
-                method: "GET"
-            }, function _callback(err, res, body) {
-                if (err) {
-                    callback(err.code);
-                } else {
-                    callback('drOk');
-                }
-            });
+            try {
+                reQuest({
+                    url: 'http://122.248.32.27:3000/mo/xl?msisdn=' + msisdn + '&sms=' + sms + '&trxid=' + id + '&trxdate=' + dateString + '&shortcode=912345',
+                    method: "GET"
+                }, function _callback(err, res, body) {
+                    if (err) {
+                        callback(err.code);
+                    } else {
+                        callback('drOk');
+                    }
+                });
+            } catch (err) {
+                console.log('Hit DR Err');
+            }
         }
 
         responseEngine(function (result) {
